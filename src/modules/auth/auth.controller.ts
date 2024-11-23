@@ -27,4 +27,18 @@ export class AuthController {
   > {
     return await this.authService.register(data);
   }
+
+  @Post('verify')
+  async verify(@Body() data: { token: string }): Promise<
+    | {
+        valid: boolean;
+        decoded: object;
+      }
+    | {
+        valid: boolean;
+        error: string;
+      }
+  > {
+    return await this.authService.verify(data.token);
+  }
 }

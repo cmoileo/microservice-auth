@@ -83,4 +83,17 @@ export class AuthService {
       throw new Error(e);
     }
   }
+
+  public async verify(token: string): Promise<
+    | {
+        valid: boolean;
+        decoded: object;
+      }
+    | {
+        valid: boolean;
+        error: string;
+      }
+  > {
+    return await new JwtService().verify(token);
+  }
 }

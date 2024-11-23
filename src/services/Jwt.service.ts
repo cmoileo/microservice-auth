@@ -13,9 +13,18 @@ class JwtService {
     return jwt.sign(payload, this.secret, { expiresIn: expiresIn });
   }
 
-  async verify(token: string): Promise<object> {
+  async verify(token: string): Promise<
+    | {
+        valid: boolean;
+        decoded: object;
+      }
+    | {
+        valid: boolean;
+        error: string;
+      }
+  > {
     try {
-      if (!process.env.JWT_SECRET) return new Error('Secret is not defined');
+      if (!process.env.JWT_SECRET) throw new Error('Secret is not defined');
       const decoded = await jwt.verify(token, process.env.JWT_SECRET);
       return {
         valid: true,
