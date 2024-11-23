@@ -41,4 +41,14 @@ export class AuthController {
   > {
     return await this.authService.verify(data.token);
   }
+
+  @Post('refresh')
+  async refresh(@Body() data: { token: string }): Promise<
+    | {
+        token: string;
+      }
+    | HttpException
+  > {
+    return await this.authService.refresh(data.token);
+  }
 }

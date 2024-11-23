@@ -96,4 +96,25 @@ export class AuthService {
   > {
     return await new JwtService().verify(token);
   }
+
+  public async refresh(token: string): Promise<
+    | {
+        token: string;
+      }
+    | HttpException
+  > {
+    const result: any = await new JwtService().verify(token);
+    if (result.valid) {
+      return {
+        token: await new JwtService().generateToken(
+          {
+            email: result.decoded['email'],
+          },
+          '1d',
+        ),
+      };
+    } else {
+      return new HttpException(result.error, 401);
+    }
+  }
 }
