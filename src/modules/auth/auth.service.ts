@@ -43,6 +43,9 @@ export class AuthService {
       '1d',
     );
 
+    user.refreshToken = token;
+    await this.userRepository.save(user);
+
     return {
       token: token,
     };
@@ -68,13 +71,14 @@ export class AuthService {
     newUser.password = hashedPassword;
 
     try {
-      const createdUser = await this.userRepository.save(newUser);
       const token: string = await new JwtService().generateToken(
         {
-          email: createdUser.email,
+          email: email,
         },
         '1d',
       );
+      newUser.refreshToken = token;
+      const createdUser = await this.userRepository.save(newUser);
       return {
         email: createdUser.email,
         token: token,
@@ -105,13 +109,19 @@ export class AuthService {
   > {
     const result: any = await new JwtService().verify(token);
     if (result.valid) {
+      const newToken = await new JwtService().generateToken(
+        {
+          email: result.decoded['email'],
+        },
+        '1d',
+      );
+      const user = await this.userRepository.findOne({
+        where: { email: result.decoded['email'] },
+      });
+      user.refreshToken = newToken;
+      await this.userRepository.save(user);
       return {
-        token: await new JwtService().generateToken(
-          {
-            email: result.decoded['email'],
-          },
-          '1d',
-        ),
+        token: newToken,
       };
     } else {
       return new HttpException(result.error, 401);
