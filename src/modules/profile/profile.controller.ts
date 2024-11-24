@@ -32,6 +32,11 @@ export class ProfileController {
     return this.profileService.findOne(id);
   }
 
+  @Get()
+  findAll() {
+    return this.profileService.findAll();
+  }
+
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateProfileDto: UpdateProfileDto) {
     return this.profileService.update(id, updateProfileDto);

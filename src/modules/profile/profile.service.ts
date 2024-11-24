@@ -77,4 +77,8 @@ export class ProfileService {
     }
     await this.profileRepository.delete(profile);
   }
+
+  public async findAll() {
+    return await this.profileRepository.find();
+  }
 }
